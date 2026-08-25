@@ -11,7 +11,7 @@ import re
 import streamlit as st
 
 # 한글폰트 설정
-try :
+try : 
     if platform.system() == 'Windows':
     # 윈도우인 경우
         font_name = font_manager.FontProperties(fname="c:/Windows/Fonts/malgun.ttf").get_name()
@@ -19,9 +19,10 @@ try :
     else:    
     # Mac 인 경우
         rc('font', family='AppleGothic')
-except :
+except : 
     pass
 matplotlib.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 깨짐 방지
+
 
 
 class PensionData():
@@ -32,7 +33,7 @@ class PensionData():
         self.pattern1 = r'(\([^)]+\))'
         self.pattern2 = r'(\[[^)]+\])'
         self.pattern3 = r'[^A-Za-z0-9가-힣]'
-        self.preprocess()
+        self.preprocess()    
 
     # 전처리   
     def preprocess(self):
@@ -51,7 +52,6 @@ class PensionData():
             '적용일자', '재등록일자', '탈퇴일자',
             '가입자수', '금액', '신규', '상실'
         ]
-        
         # 불필요한 컬럼 제거
         df = self.df.drop(['자료생성년월', '우편번호', '사업장지번상세주소', '고객법정동주소코드', '고객행정동주소코드', '사업장형태구분코드 1 법인 2 개인', '적용일자', '재등록일자'], axis=1)
         # 사업장명 cleasing
@@ -111,48 +111,48 @@ class PensionData():
 # 국민연금공단_국민연금 가입 사업장 내역_20251124.csv
 file_path = r'https://www.dropbox.com/scl/fi/q05nabk8r0822dy8q1kew/_-_20251124.csv?rlkey=x3z852i71fwm60kc69rijiwno&st=cxcnw7rz&dl=1'
 
-@st.cache_resource # 동일 함수 반복 호출되면 매번 실행하지 않고, 마지막으로 실행된 결과를 return 하게 됨.
+
+@st.cache_resource   # 동일 함수 반복 호출되면,  매번 실행하지 않고, 마지막으로 실행된 결과를 리턴케 함.
 def read_pensiondata():
     data = PensionData(file_path)
     return data
 
 data = read_pensiondata()
 
-
 st.title("국민연금 데이터 분석")
-company_name = st.text_input("회사명을 입력해 주세요", placeholder = "검색할 회사명 입력")
 
+company_name = st.text_input("회사명을 입력해 주세요", placeholder="검색할 회사명 입력")
 
 if data and company_name:
     output = data.find_company(company_name=company_name)
 
     if len(output) > 0:
         st.subheader(output.iloc[0]['사업장명'])
-    
+
         info = data.company_info(company_name=company_name)
         st.markdown(
-                f"""
-                - `{info['주소']}`
-                - 업종코드명 `{info['업종코드명']}`
-                - 총 근무자 `{int(info['가입자수']):,}` 명
-                - 신규 입사자 `{info['신규']:,}` 명
-                - 퇴사자 `{info['상실']:,}` 명
-                """
-            ) 
+            f"""
+            - `{info['주소']}`
+            - 업종코드명 `{info['업종코드명']}`
+            - 총 근무자 `{int(info['가입자수']):,}` 명
+            - 신규 입사자 `{info['신규']:,}` 명
+            - 퇴사자 `{info['상실']:,}` 명
+            """
+        ) 
 
         col1, col2, col3 = st.columns(3)
         col1.text('월급여 추정')
         col1.markdown(f"`{int(output.iloc[0]['월급여추정']):,}` 원")
-    
+
         col2.text('연봉 추정')
         col2.markdown(f"`{int(output.iloc[0]['연간급여추정']):,}` 원")
-    
+
         col3.text('가입자수 추정')
         col3.markdown(f"`{int(output.iloc[0]['가입자수']):,}` 명")
-    
+
         comp_output = data.compare_company(company_name=company_name)
         st.dataframe(comp_output.round(0), use_container_width=True)
-    
+
         st.markdown(f'### 업종 평균 VS {company_name} 비교')
         # 검색은 회사의 '월급여추정'액과 업종평균을 비교
         percent_value = info['월급여추정'] / comp_output.iloc[0, 0] * 100 - 100
@@ -167,26 +167,27 @@ if data and company_name:
         """)   
 
 
-        fig, ax = plt.subpot(1,2)
-        
+        fig, ax = plt.subplots(1, 2)
+
         p1 = ax[0].bar(x=["Average", "Your Company"], height=(comp_output.iloc[0, 0], info['월급여추정']), width=0.7)
         ax[0].bar_label(p1, fmt='%d')
         p1[0].set_color('black')
         p1[1].set_color('red')
         ax[0].set_title('Monthly Salary')
-    
+
         p2 = ax[1].bar(x=["Average", "Your Company"], height=(comp_output.iloc[1, 0], info['연간급여추정']), width=0.7)
         p2[0].set_color('black')
         p2[1].set_color('red')
         ax[1].bar_label(p2, fmt='%d')
         ax[1].set_title('Yearly Salary')
-    
+
         ax[0].tick_params(axis='both', which='major', labelsize=8, rotation=0)
         ax[0].tick_params(axis='both', which='minor', labelsize=6)
         ax[1].tick_params(axis='both', which='major', labelsize=8)
-        ax[1].tick_params(axis='both', which='minor', labelsize=6)
-    
+        ax[1].tick_params(axis='both', which='minor', labelsize=6)        
+
         st.pyplot(fig)
+
 
         st.markdown('### 동종업계')
         df = data.get_data()
@@ -197,5 +198,21 @@ if data and company_name:
 
     else:
         st.subheader('검색결과가 없습니다')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
