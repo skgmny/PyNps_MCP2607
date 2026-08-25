@@ -122,7 +122,7 @@ st.title("국민연금 데이터 분석")
 company_name = st.text_input("회사명을 입력해 주세요", placeholder = "검색할 회사명 입력")
 
 
-if data and compant_name:
+if data and company_name:
     output = data.find_company(company_name=company_name)
 
 if len(output) > 0:
