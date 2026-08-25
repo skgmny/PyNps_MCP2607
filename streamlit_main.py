@@ -110,7 +110,7 @@ class PensionData():
 # 국민연금공단_국민연금 가입 사업장 내역_20251124.csv
 file_path = r'https://www.dropbox.com/scl/fi/q05nabk8r0822dy8q1kew/_-_20251124.csv?rlkey=x3z852i71fwm60kc69rijiwno&st=cxcnw7rz&dl=1'
 
-@st.cache_resourse #동일 함수 반복 호출되면 매번 실행하지 않고, 마지막으로 실행된 결과를 return 하게 됨.
+@st.cache_resourse # 동일 함수 반복 호출되면 매번 실행하지 않고, 마지막으로 실행된 결과를 return 하게 됨.
 def read_pensiondata():
     data = PensionData(file_path)
     return data
