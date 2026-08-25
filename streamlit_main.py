@@ -115,7 +115,7 @@ def read_pensiondata():
     data = PensionData(file_path)
     return data
 
-data = read_pensiondaya()
+data = read_pensiondata()
 
 company_name = st.text_input("회사명을 입력해 주세요", placeholder = "검색할 회사명 입력")
 
