@@ -166,26 +166,35 @@ if data and company_name:
         """)   
 
 
-    fig, ax = plt.subpot(1,2)
+        fig, ax = plt.subpot(1,2)
+        
+        p1 = ax[0].bar(x=["Average", "Your Company"], height=(comp_output.iloc[0, 0], info['월급여추정']), width=0.7)
+        ax[0].bar_label(p1, fmt='%d')
+        p1[0].set_color('black')
+        p1[1].set_color('red')
+        ax[0].set_title('Monthly Salary')
     
-    p1 = ax[0].bar(x=["Average", "Your Company"], height=(comp_output.iloc[0, 0], info['월급여추정']), width=0.7)
-    ax[0].bar_label(p1, fmt='%d')
-    p1[0].set_color('black')
-    p1[1].set_color('red')
-    ax[0].set_title('Monthly Salary')
-
-    p2 = ax[1].bar(x=["Average", "Your Company"], height=(comp_output.iloc[1, 0], info['연간급여추정']), width=0.7)
-    p2[0].set_color('black')
-    p2[1].set_color('red')
-    ax[1].bar_label(p2, fmt='%d')
-    ax[1].set_title('Yearly Salary')
-
-    ax[0].tick_params(axis='both', which='major', labelsize=8, rotation=0)
-    ax[0].tick_params(axis='both', which='minor', labelsize=6)
-    ax[1].tick_params(axis='both', which='major', labelsize=8)
-    ax[1].tick_params(axis='both', which='minor', labelsize=6)
-
-    st.pyplot(fig)
-
+        p2 = ax[1].bar(x=["Average", "Your Company"], height=(comp_output.iloc[1, 0], info['연간급여추정']), width=0.7)
+        p2[0].set_color('black')
+        p2[1].set_color('red')
+        ax[1].bar_label(p2, fmt='%d')
+        ax[1].set_title('Yearly Salary')
     
+        ax[0].tick_params(axis='both', which='major', labelsize=8, rotation=0)
+        ax[0].tick_params(axis='both', which='minor', labelsize=6)
+        ax[1].tick_params(axis='both', which='major', labelsize=8)
+        ax[1].tick_params(axis='both', which='minor', labelsize=6)
+    
+        st.pyplot(fig)
+
+        st.markdown('### 동종업계')
+        df = data.get_data()
+        st.dataframe(df.loc[df['업종코드'] == info['업종코드'], ['사업장명', '월급여추정', '연간급여추정', '가입자수']]\
+            .sort_values('연간급여추정', ascending=False).head(10).round(0), 
+            use_container_width=True
+        )
+
+    else:
+        st.subheader('검색결과가 없습니다')
+
 
